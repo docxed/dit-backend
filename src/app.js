@@ -18,6 +18,9 @@ const errorException = require('./middlewares/errorException')
 const authRouter = require('./modules/userModule/routes/authRoute')
 const userRouter = require('./modules/userModule/routes/userRoute')
 
+app.get('/', (req, res) => {
+  res.send('Hello This is Digital Intelligence Test Application API.')
+})
 app.use('/api', apiRouter)
 apiRouter.use('/auth', authRouter)
 apiRouter.use('/user', userRouter)
