@@ -51,12 +51,12 @@ module.exports = {
       .groupBy('user.id')
     return user.length ? serializeUser(user[0]) : null
   },
-  getUserWithPassword: async (email) => {
-    const user = await knex('user').where({ email }).first().select('id', 'email', 'password')
+  getUserWithPassword: async (filters) => {
+    const user = await knex('user').where(filters).first().select('id', 'email', 'password')
     return user
   },
   updateUser: async (id, data) => {
     const updatedUser = await knex('user').where({ id }).update(data).returning('*')
-    return updatedUser ? serializeUser(updatedUser[0]) : null
+    return await module.exports.getUser(updatedUser[0].id)
   },
 }

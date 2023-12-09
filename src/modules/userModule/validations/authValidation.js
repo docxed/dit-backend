@@ -28,7 +28,18 @@ const loginSchema = Joi.object({
   password: Joi.string().min(8).max(20).required(),
 })
 
+const changePasswordSchema = Joi.object({
+  password: Joi.password().max(20).required(),
+  new_password: Joi.password().max(20).required(),
+  confirm_new_password: Joi.password()
+    .max(20)
+    .required()
+    .valid(Joi.ref('new_password'))
+    .messages({ 'any.only': 'รหัสผ่านไม่ตรงกัน' }),
+})
+
 module.exports = {
   validateRegister: (data) => registerSchema.validate(data),
   validateLogin: (data) => loginSchema.validate(data),
+  validateChangePassword: (data) => changePasswordSchema.validate(data),
 }

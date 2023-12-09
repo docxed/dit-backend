@@ -1,7 +1,11 @@
 const userModel = require('../models/userModel')
 const userGroupModel = require('../models/userGroupModel')
 const { createError } = require('../../../utils/errorHandler')
-const { validateRegister, validateLogin } = require('../validations/authValidation')
+const {
+  validateRegister,
+  validateLogin,
+  validateChangePassword,
+} = require('../validations/authValidation')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 const moment = require('../../../utils/moment')
@@ -34,7 +38,7 @@ module.exports = {
   registerUser: async (register) => {
     const { error, value: registerData } = validateRegister(register)
     if (error) throw error
-    const userExist = await userModel.getAllUser({ email: registerData.email, del_flag: false })
+    const userExist = await userModel.getAllUser({ email: registerData.email })
     if (userExist.length > 0) throw createError(400, 'อีเมลนี้มีผู้ใช้งานแล้ว', 'ValidationError')
 
     const password_hashed = await module.exports.passwordHash(registerData.password)
@@ -61,7 +65,7 @@ module.exports = {
   loginUser: async (login) => {
     const { error, value: loginData } = validateLogin(login)
     if (error) throw error
-    const user = await userModel.getUserWithPassword(loginData.email)
+    const user = await userModel.getUserWithPassword({ email: loginData.email, del_flag: false })
     if (!user) throw createError(400, 'อีเมลหรือรหัสผ่านไม่ถูกต้อง', 'ValidationError')
     const passwordMatch = await bcrypt.compare(loginData.password, user.password)
     if (!passwordMatch) throw createError(400, 'อีเมลหรือรหัสผ่านไม่ถูกต้อง', 'ValidationError')
@@ -70,5 +74,15 @@ module.exports = {
   },
   getMe: async (id) => {
     return await userModel.getUser(id)
+  },
+  changePassword: async (id, changePassword) => {
+    const { error, value: passwordData } = validateChangePassword(changePassword)
+    if (error) throw error
+    const user = await userModel.getUserWithPassword({ id, del_flag: false })
+    if (!user) throw createError(400, 'ไม่พบผู้ใช้งาน', 'ValidationError')
+    const passwordMatch = await bcrypt.compare(passwordData.password, user.password)
+    if (!passwordMatch) throw createError(400, 'รหัสผ่านเดิมไม่ถูกต้อง', 'ValidationError')
+    const password_hashed = await module.exports.passwordHash(passwordData.new_password)
+    return await userModel.updateUser(id, { password: password_hashed })
   },
 }
