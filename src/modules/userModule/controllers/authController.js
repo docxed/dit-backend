@@ -1,6 +1,6 @@
 const authService = require('../services/authService')
-const { auth, role } = require('@/middlewares/authMiddleware')
-const { createError } = require('@/utils/errorHandler')
+const { auth, role } = require('@src/middlewares/authMiddleware')
+const { createError } = require('@src/utils/errorHandler')
 
 module.exports = {
   registerUser: async (req, res, next) => {

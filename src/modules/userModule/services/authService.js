@@ -1,10 +1,10 @@
 const userModel = require('../models/userModel')
 const userGroupModel = require('../models/userGroupModel')
-const { createError } = require('@/utils/errorHandler')
+const { createError } = require('@src/utils/errorHandler')
 const { validateRegister, validateLogin } = require('../validations/authValidation')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
-const moment = require('@/utils/moment')
+const moment = require('@src/utils/moment')
 
 module.exports = {
   generateToken: async (user) => {

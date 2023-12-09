@@ -38,6 +38,6 @@
     "prettier": "3.1.0"
   },
   "_moduleAliases": {
-    "@": "src"
+    "@src": "src"
   }
 }
