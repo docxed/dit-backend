@@ -12,9 +12,9 @@
       "dest": "src/app.js"
     }
   ],
-  "functions": {
-    "src/**/*.js": {
-      "runtime": "@vercel/node@1.9.1"
+  "build": {
+    "babel": {
+      "configFile": ".babelrc"
     }
   }
 }
