@@ -4,14 +4,11 @@ const { createError } = require('@/utils/errorHandler')
 const { validateRegister, validateLogin } = require('../validations/authValidation')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
+const moment = require('@/utils/moment')
 
 module.exports = {
   generateToken: async (user) => {
-    const payload = {
-      id: user.id,
-      email: user.email,
-      groups: user.groups,
-    }
+    const payload = user
     return {
       access_token: jwt.sign(payload, process.env.JWT_SECRET, {
         expiresIn: 24 * 60 * 60, // 24 hours
@@ -37,13 +34,23 @@ module.exports = {
   registerUser: async (register) => {
     const { error, value: registerData } = validateRegister(register)
     if (error) throw error
-    const userExist = await userModel.getAllUser({ email: registerData.email })
+    const userExist = await userModel.getAllUser({ email: registerData.email, del_flag: false })
     if (userExist.length > 0) throw createError(400, 'อีเมลนี้มีผู้ใช้งานแล้ว', 'ValidationError')
 
     const password_hashed = await module.exports.passwordHash(registerData.password)
     const createdUser = await userModel.registerUser({
-      ...registerData,
+      email: registerData.email,
+      prefix: registerData.prefix,
+      firstname: registerData.firstname,
+      lastname: registerData.lastname,
+      school: registerData.school,
       password: password_hashed,
+      gender: registerData.gender,
+      birthday: registerData.birthday,
+      phone: registerData.phone,
+      province: registerData.province,
+      create_date: moment().format(),
+      del_flag: false,
     })
     await userGroupModel.createUserGroup({
       user_id: createdUser.id,
@@ -58,7 +65,8 @@ module.exports = {
     if (!user) throw createError(400, 'อีเมลหรือรหัสผ่านไม่ถูกต้อง', 'ValidationError')
     const passwordMatch = await bcrypt.compare(loginData.password, user.password)
     if (!passwordMatch) throw createError(400, 'อีเมลหรือรหัสผ่านไม่ถูกต้อง', 'ValidationError')
-    return await module.exports.generateToken(user)
+    const userData = await userModel.getUser(user.id)
+    return await module.exports.generateToken(userData)
   },
   getMe: async (id) => {
     return await userModel.getUser(id)

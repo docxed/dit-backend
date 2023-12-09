@@ -1,4 +1,6 @@
 const knex = require('@/db')
+const { GENDER } = require('../constants/user')
+const moment = require('@/utils/moment')
 
 const baseUserQuery = () =>
   knex('user')
@@ -13,9 +15,19 @@ const getGroupsArrayColumn = () =>
 const serializeUser = (user) => ({
   id: user.id,
   email: user.email,
-  create_date: user.create_date,
-  update_date: user.update_date,
+  prefix: user.prefix,
+  firstname: user.firstname,
+  lastname: user.lastname,
+  fullname: `${user.firstname} ${user.lastname}`,
+  school: user.school,
+  gender: user.gender ? GENDER.find((v) => v.id === user.gender).name : '',
+  birthday: user.birthday ? moment(user.birthday).format('YYYY-MM-DD') : null,
+  phone: user.phone,
+  province: user.province,
+  create_date: user.create_date ? moment(user.create_date).format('YYYY-MM-DD HH:mm') : null,
+  update_date: user.update_date ? moment(user.update_date).format('YYYY-MM-DD HH:mm') : null,
   groups: user.groups || [],
+  del_flag: user.del_flag,
 })
 
 module.exports = {
@@ -40,7 +52,11 @@ module.exports = {
     return user.length ? serializeUser(user[0]) : null
   },
   getUserWithPassword: async (email) => {
-    const user = await baseUserQuery().where({ email }).first()
+    const user = await knex('user').where({ email }).first().select('id', 'email', 'password')
     return user
+  },
+  updateUser: async (id, data) => {
+    const updatedUser = await knex('user').where({ id }).update(data).returning('*')
+    return updatedUser ? serializeUser(updatedUser[0]) : null
   },
 }

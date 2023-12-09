@@ -1,4 +1,6 @@
 const authService = require('../services/authService')
+const { auth, role } = require('@/middlewares/authMiddleware')
+const { createError } = require('@/utils/errorHandler')
 
 module.exports = {
   registerUser: async (req, res, next) => {
@@ -25,13 +27,16 @@ module.exports = {
       next(err)
     }
   },
-  getMe: async (req, res, next) => {
-    try {
-      const user = await authService.getMe(req.user.id)
-      if (!user) throw createError(401, 'ไม่พบผู้ใช้งาน', 'UnauthorizedError')
-      res.status(200).json(user)
-    } catch (err) {
-      next(err)
-    }
-  },
+  getMe: [
+    auth,
+    async (req, res, next) => {
+      try {
+        const user = await authService.getMe(req.user.id)
+        if (!user) throw createError(401, 'ไม่พบผู้ใช้งาน', 'UnauthorizedError')
+        res.status(200).json(user)
+      } catch (err) {
+        next(err)
+      }
+    },
+  ],
 }
