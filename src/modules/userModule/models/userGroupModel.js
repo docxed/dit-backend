@@ -1,4 +1,4 @@
-const knex = require(global.SRC + '/db')
+const knex = require('@/db')
 
 const baseUserGroupQuery = () => knex('user_group')
 

@@ -1,5 +1,4 @@
 require('dotenv').config()
-global.SRC = __dirname
 const express = require('express')
 const cookieParser = require('cookie-parser')
 const cors = require('cors')

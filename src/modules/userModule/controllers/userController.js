@@ -1,6 +1,6 @@
 const userService = require('../services/userService')
-const { auth, role } = require(global.SRC + '/middlewares/authMiddleware')
-const { createError } = require(global.SRC + '/utils/errorHandler')
+const { auth, role } = require('@/middlewares/authMiddleware')
+const { createError } = require('@/utils/errorHandler')
 
 module.exports = {
   updateUser: async (req, res, next) => {

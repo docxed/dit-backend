@@ -1,6 +1,6 @@
-const knex = require(global.SRC + '/db')
+const knex = require('@/db')
 const { GENDER } = require('../constants/user')
-const moment = require(global.SRC + '/utils/moment')
+const moment = require('@/utils/moment')
 
 const baseUserQuery = () =>
   knex('user')
