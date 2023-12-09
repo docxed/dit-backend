@@ -1,4 +1,4 @@
-const Joi = require('@/utils/customJoi')
+const Joi = require('../../../utils/customJoi')
 
 const updateUserSchema = Joi.object({
   prefix: Joi.string().max(50).required(),

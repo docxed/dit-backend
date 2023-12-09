@@ -1,4 +1,4 @@
-const Joi = require('@/utils/customJoi')
+const Joi = require('../../../utils/customJoi')
 
 // Define schemas
 const registerSchema = Joi.object({
