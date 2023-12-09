@@ -1,4 +1,4 @@
-const knex = require('@/db')
+const knex = require('../../../db')
 const { GENDER } = require('../constants/user')
 const moment = require('@/utils/moment')
 
