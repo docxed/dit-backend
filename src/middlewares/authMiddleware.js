@@ -1,4 +1,4 @@
-const { createError } = require('@src/utils/errorHandler')
+const { createError } = require('@/utils/errorHandler')
 const jwt = require('jsonwebtoken')
 
 const auth = (req, res, next) => {
