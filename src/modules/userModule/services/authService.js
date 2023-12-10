@@ -5,10 +5,12 @@ const {
   validateRegister,
   validateLogin,
   validateChangePassword,
+  validateResetPassword,
 } = require('../validations/authValidation')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 const moment = require('../../../utils/moment')
+const { sendMail } = require('../../../utils/mailler')
 
 module.exports = {
   generateToken: async (user) => {
@@ -84,5 +86,20 @@ module.exports = {
     if (!passwordMatch) throw createError(400, 'รหัสผ่านเดิมไม่ถูกต้อง', 'ValidationError')
     const password_hashed = await module.exports.passwordHash(passwordData.new_password)
     return await userModel.updateUser(id, { password: password_hashed })
+  },
+  resetPassword: async ({ email }) => {
+    const { error, value: emailData } = validateResetPassword({ email })
+    if (error) throw error
+    const user = (await userModel.getAllUser({ email: emailData.email }))[0]
+    if (!user) throw createError(400, 'ไม่พบผู้ใช้งาน', 'ValidationError')
+    const newPassword = Math.random().toString(36).slice(-8)
+    const password_hashed = await module.exports.passwordHash(newPassword)
+    await userModel.updateUser(user.id, { password: password_hashed })
+    await sendMail({
+      from: process.env.MAILER_USER,
+      to: emailData.email,
+      subject: 'รีเซ็ตรหัสผ่าน',
+      text: `รหัสผ่านชั่วคราวของคุณคือ ${newPassword}`,
+    })
   },
 }

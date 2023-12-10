@@ -38,8 +38,13 @@ const changePasswordSchema = Joi.object({
     .messages({ 'any.only': 'รหัสผ่านไม่ตรงกัน' }),
 })
 
+const resetPasswordSchema = Joi.object({
+  email: Joi.string().max(100).email().required(),
+})
+
 module.exports = {
   validateRegister: (data) => registerSchema.validate(data),
   validateLogin: (data) => loginSchema.validate(data),
   validateChangePassword: (data) => changePasswordSchema.validate(data),
+  validateResetPassword: (data) => resetPasswordSchema.validate(data),
 }
