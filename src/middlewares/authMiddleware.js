@@ -17,8 +17,10 @@ const auth = (req, res, next) => {
 }
 
 const role = (roles) => (req, res, next) => {
-  if (!roles.includes(req.user.group)) {
-    throw createError(403, 'Forbidden', 'ForbiddenError')
+  const { groups } = req.user
+  const isAuthorized = groups.some((group) => roles.includes(group))
+  if (!isAuthorized) {
+    throw createError(403, 'ผู้ใช้งานไม่มีสิทธิ์ใช้งานส่วนนี้', 'ForbiddenError')
   }
   next()
 }

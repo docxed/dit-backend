@@ -16,6 +16,7 @@ app.use(morgan(process.env.NODE_ENV === 'production' ? 'combined' : 'dev'))
 const errorException = require('./middlewares/errorException')
 const authRouter = require('./modules/userModule/routes/authRoute')
 const userRouter = require('./modules/userModule/routes/userRoute')
+const examsetRouter = require('./modules/examsetModule/routes/examsetRoute')
 
 app.get('/', (req, res) => {
   res.send('Hello This is Digital Intelligence Test Application API.')
@@ -23,6 +24,7 @@ app.get('/', (req, res) => {
 app.use('/api', apiRouter)
 apiRouter.use('/auth', authRouter)
 apiRouter.use('/user', userRouter)
+apiRouter.use('/examset', examsetRouter)
 
 app.use(errorException)
 
